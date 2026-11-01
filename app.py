@@ -3,142 +3,134 @@ import tensorflow as tf
 from PIL import Image
 import numpy as np
 import base64
+import os
 
 # ==========================================
-# 1. إعدادات الصفحة الأساسية
+# 1. CONFIGURATION DE LA PAGE
 # ==========================================
-st.set_page_config(page_title="PalmIA - منصة النخيل الذكية", page_icon="🌴", layout="wide")
+st.set_page_config(page_title="PalmIA - L'Excellence Agricole", page_icon="🌴", layout="wide")
 
 # ==========================================
-# 2. دالة لجلب الصورة كخلفية (Base64)
+# 2. FONCTION POUR LA PHOTO DE FOND
 # ==========================================
 def get_base64(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
-# تأكد أن اسم الصورة يطابق ما رفعته في GitHub
-try:
+# On vérifie si l'image est bien présente sur GitHub
+if os.path.exists("oasis_bg.jpg"):
     bg_image = get_base64("oasis_bg.jpg")
-    bg_css = f"background-image: url('data:image/jpeg;base64,{bg_image}');"
-except:
-    # في حال لم يتم رفع الصورة، سيستخدم لون أخضر داكن فخم
-    bg_css = "background-color: #0B1A10;"
+    bg_css = f"background: linear-gradient(rgba(10, 25, 15, 0.7), rgba(10, 25, 15, 0.8)), url('data:image/jpeg;base64,{bg_image}') no-repeat center center fixed; background-size: cover;"
+else:
+    bg_css = "background: #0B1A10;"
 
 # ==========================================
-# 3. التصميم الفخم (CSS متقدم جداً)
+# 3. LE DESIGN LUXUEUX (CSS AVANCÉ)
 # ==========================================
 st.markdown(f"""
     <style>
-    /* استيراد خطوط عربية وإنجليزية فخمة */
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@300;600&display=swap');
+    /* Importation de polices élégantes */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
 
-    /* إخفاء عناصر Streamlit الافتراضية لمظهر موقع حقيقي */
+    /* Masquer les éléments par défaut de Streamlit */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
     header {{visibility: hidden;}}
-    
-    /* الخلفية العظيمة */
+
+    /* Application de la photo de fond */
     .stApp {{
         {bg_css}
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        font-family: 'Cairo', sans-serif;
+        font-family: 'Poppins', sans-serif;
     }}
 
-    /* حاوية المحتوى الرئيسي (تأثير زجاجي داكن) */
+    /* Conteneur principal style "Verre Dépoli" */
     .block-container {{
-        background: rgba(10, 25, 15, 0.75); /* لون أخضر داكن شفاف */
-        backdrop-filter: blur(12px); /* تأثير الزجاج */
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 30, 20, 0.65); /* Vert très sombre transparent */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(212, 175, 55, 0.3); /* Bordure dorée */
         border-radius: 20px;
-        border: 1px solid rgba(212, 175, 55, 0.3); /* إطار ذهبي خفيف */
         padding: 3rem 4rem;
-        margin-top: 2rem;
-        box-shadow: 0 25px 50px 0 rgba(0, 0, 0, 0.5);
+        margin-top: 3rem;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     }}
 
-    /* تنسيق العناوين */
-    h1, h2, h3 {{
-        color: #F5F5DC !important; /* لون بيج فخم */
-        font-family: 'Cairo', sans-serif;
-        text-align: center;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-    }}
-    
+    /* Titres */
     h1 {{
-        font-weight: 900;
+        color: #F5F5DC !important; /* Beige clair */
+        font-family: 'Playfair Display', serif;
         font-size: 3.5rem !important;
+        text-align: center;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         margin-bottom: 0px;
     }}
     
-    h2 {{ font-weight: 700; color: #D4AF37 !important; }} /* ذهبي */
-    h3 {{ font-weight: 400; font-size: 1.2rem !important; color: #E0E0E0 !important; }}
+    h2, h3, h4 {{
+        color: #D4AF37 !important; /* Or */
+        font-family: 'Playfair Display', serif;
+        text-align: center;
+    }}
 
-    /* تنسيق النصوص */
-    p, label, .stMarkdown {{
+    p, label {{
         color: #E0E0E0 !important;
         font-size: 1.1rem;
         text-align: center;
     }}
 
-    /* تنسيق الأزرار الفخمة */
+    /* Boutons Dorés */
     .stButton>button {{
-        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); /* تدرج ذهبي */
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
         color: #0B1A10 !important;
         border-radius: 50px;
         border: none;
-        padding: 15px 40px;
-        font-weight: 900;
-        font-family: 'Cairo', sans-serif;
-        font-size: 1.2rem;
+        padding: 12px 30px;
+        font-weight: 600;
+        font-size: 1.1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         width: 100%;
     }}
     
     .stButton>button:hover {{
         transform: translateY(-3px);
-        box-shadow: 0 15px 25px rgba(212, 175, 55, 0.4);
+        box-shadow: 0 15px 25px rgba(212, 175, 55, 0.5);
         background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
     }}
 
-    /* تنسيق التبويبات (Tabs) */
+    /* Onglets (Tabs) personnalisés */
     .stTabs [data-baseweb="tab-list"] {{
-        gap: 20px;
-        background-color: transparent;
+        gap: 15px;
         justify-content: center;
-        margin-top: 20px;
+        margin-bottom: 30px;
     }}
     
     .stTabs [data-baseweb="tab"] {{
-        height: 60px;
+        height: 55px;
         background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 50px;
+        border-radius: 30px;
         padding: 0 30px;
-        color: #D4AF37 !important; /* ذهبي */
-        font-weight: 700;
+        color: #D4AF37 !important;
         border: 1px solid rgba(212, 175, 55, 0.3);
+        font-weight: 600;
         transition: all 0.3s;
     }}
     
     .stTabs [aria-selected="true"] {{
-        background-color: #2E7D32 !important; /* أخضر نخيلي */
+        background-color: #2E7D32 !important; /* Vert palmier */
         color: white !important;
-        border: 1px solid #2E7D32;
-        box-shadow: 0 0 15px rgba(46, 125, 50, 0.5);
+        border: 1px solid #4CAF50;
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
     }}
 
-    /* تصميم البطاقات (Cards) */
+    /* Cartes pour l'Encyclopédie */
     .luxury-card {{
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(212, 175, 55, 0.2);
         border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        transition: all 0.3s ease;
+        padding: 25px;
         margin-bottom: 20px;
+        transition: all 0.3s ease;
     }}
     
     .luxury-card:hover {{
@@ -149,54 +141,44 @@ st.markdown(f"""
     }}
     
     .luxury-card h4 {{
-        color: #D4AF37 !important; /* ذهبي */
-        font-size: 1.5rem;
-        margin-bottom: 15px;
+        text-align: right;
+        margin-bottom: 10px;
     }}
     
     .luxury-card p {{
-        text-align: right; /* محاذاة النص العربي لليمين */
+        text-align: right;
         line-height: 1.8;
-    }}
-    
-    /* تنسيق منطقة رفع الصور */
-    .stFileUploader {{
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px dashed #D4AF37;
-        border-radius: 15px;
-        padding: 20px;
     }}
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 4. محتوى الصفحة
+# 4. CONTENU DU SITE
 # ==========================================
 
-# العنوان الرئيسي (مثل الصور)
+# En-tête
 st.markdown("<h1>🌴 PalmIA</h1>", unsafe_allow_html=True)
-st.markdown("<h2>نظام التشخيص الذكي لنخيل التمر</h2>", unsafe_allow_html=True)
-st.markdown("<h3>احمِ واحتك بفضل قوة الذكاء الاصطناعي في موريتانيا</h3>", unsafe_allow_html=True)
+st.markdown("<h3>L'Intelligence Artificielle au Service de la Palmeraie Mauritanienne</h3>", unsafe_allow_html=True)
 st.write("<br>", unsafe_allow_html=True)
 
-# التبويبات
-tab1, tab2, tab3 = st.tabs(["📸 التشخيص بالذكاء الاصطناعي", "📚 موسوعة الأمراض والآفات", "ℹ️ عن المنصة"])
+# Onglets
+tab1, tab2, tab3 = st.tabs(["📸 Diagnostic Intelligent", "📚 Encyclopédie des Menaces", "ℹ️ À Propos"])
 
-# --- التبويب 1: التشخيص ---
+# --- ONGLET 1 : DIAGNOSTIC ---
 with tab1:
-    st.write("<br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        uploaded_file = st.file_uploader("قم برفع صورة لسعفة أو ثمرة للبدء في التحليل...", type=["jpg", "jpeg", "png"])
+        st.markdown("<h4>Analysez votre palmier</h4>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Glissez-déposez une image (JPG, PNG) pour un diagnostic instantané", type=["jpg", "jpeg", "png"])
         
         if uploaded_file is not None:
             image = Image.open(uploaded_file)
-            st.image(image, caption="الصورة المرفوعة", use_column_width=True)
+            st.image(image, caption="Image analysée", use_column_width=True)
             
             st.write("<br>", unsafe_allow_html=True)
-            if st.button("بدء التحليل الذكي"):
-                with st.spinner("جاري تحليل الصورة بواسطة الذكاء الاصطناعي..."):
+            if st.button("Lancer l'analyse de pointe"):
+                with st.spinner("L'Intelligence Artificielle analyse votre image..."):
                     img = image.resize((224, 224))
                     img_array = np.array(img) / 255.0
                     img_array = np.expand_dims(img_array, axis=0)
@@ -209,69 +191,68 @@ with tab1:
                         model = load_model()
                         prediction = model.predict(img_array)[0][0]
                         
-                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.write("<br>", unsafe_allow_html=True)
                         if prediction > 0.5:
-                            st.error(f"⚠️ **النخلة مصابة (Malade)** - نسبة الثقة: {prediction*100:.2f}%")
+                            st.error(f"⚠️ **RÉSULTAT : MALADE** (Confiance : {prediction*100:.2f}%)")
                         else:
-                            st.success(f"✅ **النخلة سليمة (Saine)** - نسبة الثقة: {(1-prediction)*100:.2f}%")
+                            st.success(f"✅ **RÉSULTAT : SAIN** (Confiance : {(1-prediction)*100:.2f}%)")
                     except Exception as e:
-                        st.error(f"خطأ في تحميل النموذج: {e}")
+                        st.error(f"Erreur technique : {e}")
 
-# --- التبويب 2: الموسوعة ---
+# --- ONGLET 2 : ENCYCLOPÉDIE ---
 with tab2:
-    st.write("<br>", unsafe_allow_html=True)
-    categorie = st.radio("اختر الفئة:", ["الأمراض (Maladies)", "الآفات (Ravageurs)"], horizontal=True)
+    categorie = st.radio("Sélectionnez une catégorie :", ["🦠 Les Maladies", "🐛 Les Ravageurs"], horizontal=True)
     
     st.write("<br>", unsafe_allow_html=True)
     
-    col_a, col_b = st.columns(2)
-    
-    if "الأمراض" in categorie:
+    if "Maladies" in categorie:
+        col_a, col_b = st.columns(2)
         with col_a:
             st.markdown("""
             <div class="luxury-card">
-                <h4>مرض البيوض (Bayoud)</h4>
-                <p><b>الأعراض:</b> اصفرار وذبول السعف من جهة واحدة، وجفاف النخلة بشكل مفاجئ.</p>
-                <p><b>العلاج:</b> قلع النخلة المصابة وحرقها، وتعقيم التربة المحيطة.</p>
+                <h4>Le Bayoud (Fusarium oxysporum)</h4>
+                <p><b>Symptômes :</b> Décoloration des feuilles, dessèchement brutal d'un côté du palmier.</p>
+                <p><b>Traitement :</b> Arrachage et brûlage du palmier infecté.</p>
             </div>
             """, unsafe_allow_html=True)
         with col_b:
             st.markdown("""
             <div class="luxury-card">
-                <h4>الأكاروز (Acariose)</h4>
-                <p><b>الأعراض:</b> ظهور بقع بيضاء دقيقة على السعف الفتي، مما يؤدي إلى تشوهه.</p>
-                <p><b>العلاج:</b> استخدام المبيدات الأكاروسية المتخصصة والرش الدوري.</p>
+                <h4>L'Acariose</h4>
+                <p><b>Symptômes :</b> Apparition de taches blanches sur les jeunes palmes.</p>
+                <p><b>Traitement :</b> Utilisation d'acaricides spécifiques.</p>
             </div>
             """, unsafe_allow_html=True)
+            
     else:
+        col_a, col_b = st.columns(2)
         with col_a:
             st.markdown("""
             <div class="luxury-card">
-                <h4>حشرة النخيل القشرية البيضاء (Cochenille)</h4>
-                <p><b>الأعراض:</b> كتل بيضاء قطنية على السعف والثمار، وضعف عام في النخلة.</p>
-                <p><b>العلاج:</b> تقليم السعف المصاب، واستخدام المبيدات الحشرية أو المكافحة الحيوية.</p>
+                <h4>La Cochenille Blanche</h4>
+                <p><b>Symptômes :</b> Amas blancs sur les palmes et les fruits.</p>
+                <p><b>Traitement :</b> Taille des palmes infestées, traitements insecticides.</p>
             </div>
             """, unsafe_allow_html=True)
         with col_b:
             st.markdown("""
             <div class="luxury-card">
-                <h4>سوسة النخيل الحمراء (Charançon)</h4>
-                <p><b>الأعراض:</b> ثقوب في جذع النخلة، خروج نشارة خشبية، وسقوط النخلة.</p>
-                <p><b>العلاج:</b> الحقن في الجذع، واستخدام مصائد الفيرمونات.</p>
+                <h4>Le Charançon Rouge</h4>
+                <p><b>Symptômes :</b> Trous dans le tronc, sciure de bois.</p>
+                <p><b>Traitement :</b> Injection dans le tronc, pièges à phéromones.</p>
             </div>
             """, unsafe_allow_html=True)
 
-# --- التبويب 3: عن المنصة ---
+# --- ONGLET 3 : À PROPOS ---
 with tab3:
-    st.write("<br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
         <div class="luxury-card">
-            <h4>PalmIA - مشروع التخرج</h4>
-            <p>تم تطوير هذه المنصة في إطار ماستر النخيل والذكاء الاصطناعي.</p>
-            <p>تهدف المنصة إلى مساعدة المزارعين الموريتانيين على حماية واحاتهم باستخدام أحدث التقنيات.</p>
-            <p><b>الشركاء:</b> جامعة نواكشوط، USTHB، ومختبر أطار.</p>
-            <p>© 2027 - جميع الحقوق محفوظة.</p>
+            <h4>PalmIA - Projet d'Excellence</h4>
+            <p>Cette plateforme a été développée dans le cadre du Master Phœniciculture & Intelligence Artificielle.</p>
+            <p>Elle vise à aider les agriculteurs mauritaniens à protéger leurs oasis grâce aux nouvelles technologies.</p>
+            <p><b>Partenaires :</b> Université de Nouakchott, USTHB, Laboratoire d'Atar.</p>
+            <p>© 2027 - Tous droits réservés.</p>
         </div>
         """, unsafe_allow_html=True)
