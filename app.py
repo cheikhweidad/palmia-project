@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 
 # ==========================================
-# 1. CONFIGURATION ET DESIGN (Thème Clair)
+# 1. CONFIGURATION ET DESIGN (Fond Vert Palmier)
 # ==========================================
 st.set_page_config(page_title="PalmIA", page_icon="🌴", layout="wide")
 
@@ -12,48 +12,57 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     
-    /* Fond blanc cassé / beige clair */
-    .stApp { background-color: #F9F9F6; font-family: 'Poppins', sans-serif; }
+    /* Fond Vert Palmier Profond */
+    .stApp { 
+        background-color: #1B4332; 
+        font-family: 'Poppins', sans-serif; 
+    }
     
-    /* Titres en vert palmier foncé */
-    h1, h2, h3 { color: #1B4332 !important; text-align: center; }
+    /* Titres en blanc cassé et or */
+    h1 { color: #F5F5DC !important; text-align: center; font-weight: bold;}
+    h2, h3 { color: #D4AF37 !important; text-align: center; }
     
-    /* Boutons verts */
+    /* Texte général en blanc cassé */
+    p, label { color: #F5F5DC !important; }
+    
+    /* Boutons Dorés */
     .stButton>button {
-        background-color: #2D6A4F;
-        color: white !important;
+        background-color: #D4AF37;
+        color: #1B4332 !important;
         border-radius: 30px;
         border: none;
         padding: 12px 30px;
         font-weight: 600;
         width: 100%;
     }
-    .stButton>button:hover { background-color: #1B4332; }
+    .stButton>button:hover { 
+        background-color: #FFD700; 
+    }
     
-    /* Onglets verts et modernes */
+    /* Onglets modernes adaptés au fond vert */
     .stTabs [data-baseweb="tab"] {
-        background-color: #E9ECEF;
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
-        color: #1B4332 !important;
+        color: #F5F5DC !important;
         padding: 10px 20px;
         font-weight: 600;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #2D6A4F !important;
-        color: white !important;
+        background-color: #D4AF37 !important;
+        color: #1B4332 !important;
     }
     
-    /* Cartes blanches élégantes pour l'encyclopédie */
+    /* Cartes claires pour faire ressortir le texte sur le fond vert */
     .luxury-card {
-        background: white;
+        background: #F9F9F6;
         border-radius: 15px;
         padding: 25px;
-        box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
-        border-top: 5px solid #2D6A4F;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+        border-top: 5px solid #D4AF37;
         margin-bottom: 20px;
     }
     
-    .luxury-card h4 { color: #1B4332 !important; text-align: right; margin-bottom: 15px;}
+    .luxury-card h4 { color: #1B4332 !important; text-align: right; margin-bottom: 15px; }
     .luxury-card p { color: #333 !important; text-align: right; line-height: 1.8; }
     </style>
 """, unsafe_allow_html=True)
@@ -80,7 +89,6 @@ with tab1:
             
             if st.button("Lancer l'analyse de pointe"):
                 with st.spinner("L'Intelligence Artificielle analyse l'image..."):
-                    # Préparation de l'image pour le modèle
                     img = image.resize((224, 224))
                     img_array = np.array(img) / 255.0
                     img_array = np.expand_dims(img_array, axis=0)
