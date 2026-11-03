@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 
 # ==========================================
-# 1. CONFIGURATION ET DESIGN (Fond Vert Palmier)
+# 1. CONFIGURATION ET DESIGN (Fond Vert)
 # ==========================================
 st.set_page_config(page_title="PalmIA", page_icon="🌴", layout="wide")
 
@@ -12,58 +12,38 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     
-    /* Fond Vert Palmier Profond */
-    .stApp { 
-        background-color: #1B4332; 
-        font-family: 'Poppins', sans-serif; 
-    }
+    .stApp { background-color: #1B4332; font-family: 'Poppins', sans-serif; }
     
-    /* Titres en blanc cassé et or */
     h1 { color: #F5F5DC !important; text-align: center; font-weight: bold;}
     h2, h3 { color: #D4AF37 !important; text-align: center; }
-    
-    /* Texte général en blanc cassé */
     p, label { color: #F5F5DC !important; }
     
-    /* Boutons Dorés */
     .stButton>button {
-        background-color: #D4AF37;
-        color: #1B4332 !important;
-        border-radius: 30px;
-        border: none;
-        padding: 12px 30px;
-        font-weight: 600;
-        width: 100%;
+        background-color: #D4AF37; color: #1B4332 !important;
+        border-radius: 30px; border: none; padding: 12px 30px;
+        font-weight: 600; width: 100%;
     }
-    .stButton>button:hover { 
-        background-color: #FFD700; 
-    }
+    .stButton>button:hover { background-color: #FFD700; }
     
-    /* Onglets modernes adaptés au fond vert */
     .stTabs [data-baseweb="tab"] {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        color: #F5F5DC !important;
-        padding: 10px 20px;
-        font-weight: 600;
+        background-color: rgba(255, 255, 255, 0.1); border-radius: 10px;
+        color: #F5F5DC !important; padding: 10px 20px; font-weight: 600;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #D4AF37 !important;
-        color: #1B4332 !important;
+        background-color: #D4AF37 !important; color: #1B4332 !important;
     }
     
-    /* Cartes claires pour faire ressortir le texte sur le fond vert */
     .luxury-card {
-        background: #F9F9F6;
-        border-radius: 15px;
-        padding: 25px;
+        background: #F9F9F6; border-radius: 15px; padding: 25px;
         box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
-        border-top: 5px solid #D4AF37;
-        margin-bottom: 20px;
+        border-top: 5px solid #D4AF37; margin-bottom: 20px;
     }
     
     .luxury-card h4 { color: #1B4332 !important; text-align: right; margin-bottom: 15px; }
     .luxury-card p { color: #333 !important; text-align: right; line-height: 1.8; }
+    
+    /* Style pour le bouton de redirection */
+    div.stButton > button:first-child { margin-top: 15px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -74,7 +54,7 @@ st.markdown("<h1>🌴 PalmIA</h1>", unsafe_allow_html=True)
 st.markdown("<h3>Diagnostic Intelligent du Palmier Dattier</h3>", unsafe_allow_html=True)
 st.write("<br>", unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["📸 Diagnostic IA", "📚 Encyclopédie (Maladies & Ravageurs)", "ℹ️ À propos"])
+tab1, tab2, tab3, tab4 = st.tabs(["📸 Diagnostic IA", "📚 Encyclopédie", "📄 Documents & Ressources", "ℹ️ À propos"])
 
 # --- ONGLET 1 : DIAGNOSTIC ---
 with tab1:
@@ -102,9 +82,19 @@ with tab1:
                         prediction = model.predict(img_array)[0][0]
                         
                         st.write("---")
+                        
+                        # Simulation d'une prédiction de maladie spécifique
                         if prediction > 0.5:
-                            st.error(f"⚠️ **RÉSULTAT : MALADE** (Confiance : {prediction*100:.2f}%)")
-                            st.write("👉 Consultez l'onglet Encyclopédie pour identifier la maladie et le traitement.")
+                            # Pour l'exemple, on simule la détection du Bayoud
+                            maladie_detectee = "Le Bayoud"
+                            st.error(f"⚠️ **MALADIE DÉTECTÉE : {maladie_detectee}** (Confiance : {prediction*100:.2f}%)")
+                            st.write("👉 Cliquez ci-dessous pour accéder directement à la fiche de traitement.")
+                            
+                            if st.button(f"Consulter la fiche : {maladie_detectee}"):
+                                st.session_state['onglet_actif'] = 1 # Dirige vers l'onglet Encyclopédie
+                                st.session_state['categorie'] = "🦠 Les Maladies"
+                                st.rerun()
+                                
                         else:
                             st.success(f"✅ **RÉSULTAT : SAIN** (Confiance : {(1-prediction)*100:.2f}%)")
                     except Exception as e:
@@ -113,7 +103,13 @@ with tab1:
 # --- ONGLET 2 : ENCYCLOPÉDIE ---
 with tab2:
     st.markdown("<h3>Guide des Menaces</h3>", unsafe_allow_html=True)
-    categorie = st.radio("Sélectionnez une catégorie :", ["🦠 Les Maladies", "🐛 Les Ravageurs"], horizontal=True)
+    
+    # Gestion de la redirection depuis l'onglet 1
+    default_index = 0
+    if 'categorie' in st.session_state and st.session_state['categorie'] == "🦠 Les Maladies":
+        default_index = 0
+    
+    categorie = st.radio("Sélectionnez une catégorie :", ["🦠 Les Maladies", "🐛 Les Ravageurs"], index=default_index, horizontal=True)
     
     st.write("<br>", unsafe_allow_html=True)
     
@@ -155,16 +151,41 @@ with tab2:
             </div>
             """, unsafe_allow_html=True)
 
-# --- ONGLET 3 : À PROPOS ---
+# --- ONGLET 3 : DOCUMENTS ---
 with tab3:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("<h3>Documents & Ressources</h3>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="luxury-card">
+            <p>Retrouvez ici les documents techniques et scientifiques relatifs à la phœniciculture et aux maladies du palmier dattier.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Pour ajouter des documents : tu dois les uploader sur GitHub (dans le même dossier que app.py)
+        # et mettre leur nom exact dans les liens ci-dessous.
+        st.markdown("### 📄 Fiches Techniques")
+        st.markdown("[📥 Télécharger la fiche technique sur le Bayoud](https://raw.githubusercontent.com/cheikhweidad/palmia-project/main/fiche_bayoud.pdf)")
+        st.markdown("[📥 Télécharger le guide de traitement des ravageurs](https://raw.githubusercontent.com/cheikhweidad/palmia-project/main/guide_ravageurs.pdf)")
+        
+        st.write("---")
+        st.info("💡 Pour ajouter un document, uploadez-le sur GitHub et ajoutez son lien dans le code.")
+
+# --- ONGLET 4 : À PROPOS ---
+with tab4:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
         <div class="luxury-card">
-            <h4>PalmIA - Projet d'Excellence</h4>
-            <p>Cette plateforme a été développée dans le cadre du Master Phœniciculture & Intelligence Artificielle.</p>
-            <p>Elle vise à aider les agriculteurs mauritaniens à protéger leurs oasis grâce aux nouvelles technologies.</p>
-            <p><b>Partenaires :</b> Université de Nouakchott, USTHB, Laboratoire d'Atar.</p>
+            <h4>À propos de PalmIA</h4>
+            <p><b>Statut :</b> Projet en cours de développement (Version Beta).</p>
+            <p><b>Contexte :</b> Cette plateforme a été créée dans le cadre d'une collaboration internationale pour le développement et la protection des oasis.</p>
+            <p><b>Partenaires :</b></p>
+            <ul style="color: #333; text-align: right; list-style-type: none; padding: 0;">
+                <li>Université de Nouakchott (Mauritanie)</li>
+                <li>Université des Sciences et de la Technologie Houari Boumediene (USTHB, Algérie)</li>
+            </ul>
+            <p><b>Objectif :</b> Mettre l'Intelligence Artificielle au service des agriculteurs pour préserver le patrimoine phœnicicole.</p>
             <p>© 2027 - Tous droits réservés.</p>
         </div>
         """, unsafe_allow_html=True)
