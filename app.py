@@ -4,57 +4,95 @@ from PIL import Image
 import numpy as np
 
 # ==========================================
-# 1. CONFIGURATION ET DESIGN (Fond Vert)
+# 1. CONFIGURATION ET DESIGN
 # ==========================================
 st.set_page_config(page_title="PalmIA", page_icon="🌴", layout="wide")
 
-st.markdown("""
+# L'URL de votre image
+IMAGE_URL = "https://brookhampton.com/wp-content/uploads/2021/05/20210513-KCM-Share.jpg"
+
+st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     
-    .stApp { background-color: #1B4332; font-family: 'Poppins', sans-serif; }
+    /* Fond général vert palmier */
+    .stApp {{ background-color: #1B4332; font-family: 'Poppins', sans-serif; }}
     
-    h1 { color: #F5F5DC !important; text-align: center; font-weight: bold;}
-    h2, h3 { color: #D4AF37 !important; text-align: center; }
-    p, label { color: #F5F5DC !important; }
+    /* --- BANNIÈRE D'ACCUEIL (Hero Section) --- */
+    .hero-banner {{
+        background-image: linear-gradient(rgba(27, 67, 50, 0.7), rgba(27, 67, 50, 0.9)), url('{IMAGE_URL}');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 20px;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+        border-bottom: 5px solid #D4AF37;
+    }}
     
-    .stButton>button {
+    .hero-banner h1 {{
+        color: #F5F5DC !important;
+        font-size: 4rem !important;
+        font-weight: 800;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    }}
+    
+    .hero-banner p {{
+        color: #D4AF37 !important;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 0;
+    }}
+
+    /* Titres généraux */
+    h3 {{ color: #D4AF37 !important; text-align: center; }}
+    p, label {{ color: #F5F5DC !important; }}
+    
+    /* Boutons Dorés */
+    .stButton>button {{
         background-color: #D4AF37; color: #1B4332 !important;
         border-radius: 30px; border: none; padding: 12px 30px;
-        font-weight: 600; width: 100%;
-    }
-    .stButton>button:hover { background-color: #FFD700; }
+        font-weight: 600; width: 100%; transition: 0.3s;
+    }}
+    .stButton>button:hover {{ background-color: #FFD700; transform: scale(1.02); }}
     
-    .stTabs [data-baseweb="tab"] {
+    /* Onglets */
+    .stTabs [data-baseweb="tab"] {{
         background-color: rgba(255, 255, 255, 0.1); border-radius: 10px;
         color: #F5F5DC !important; padding: 10px 20px; font-weight: 600;
-    }
-    .stTabs [aria-selected="true"] {
+    }}
+    .stTabs [aria-selected="true"] {{
         background-color: #D4AF37 !important; color: #1B4332 !important;
-    }
+    }}
     
-    .luxury-card {
+    /* Cartes claires */
+    .luxury-card {{
         background: #F9F9F6; border-radius: 15px; padding: 25px;
         box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
         border-top: 5px solid #D4AF37; margin-bottom: 20px;
-    }
-    
-    .luxury-card h4 { color: #1B4332 !important; text-align: right; margin-bottom: 15px; }
-    .luxury-card p { color: #333 !important; text-align: right; line-height: 1.8; }
-    
-    /* Style pour le bouton de redirection */
-    div.stButton > button:first-child { margin-top: 15px; }
+    }}
+    .luxury-card h4 {{ color: #1B4332 !important; text-align: right; margin-bottom: 15px; }}
+    .luxury-card p {{ color: #333 !important; text-align: right; line-height: 1.8; }}
+    .luxury-card ul {{ color: #333 !important; text-align: right; padding-right: 20px; }}
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. CONTENU DU SITE
+# 2. BANNIÈRE D'ACCUEIL
 # ==========================================
-st.markdown("<h1>🌴 PalmIA</h1>", unsafe_allow_html=True)
-st.markdown("<h3>Diagnostic Intelligent du Palmier Dattier</h3>", unsafe_allow_html=True)
-st.write("<br>", unsafe_allow_html=True)
+st.markdown("""
+    <div class="hero-banner">
+        <h1>🌴 PalmIA</h1>
+        <p>L'Intelligence Artificielle au Service de la Palmeraie</p>
+    </div>
+""", unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4 = st.tabs(["📸 Diagnostic IA", "📚 Encyclopédie", "📄 Documents & Ressources", "ℹ️ À propos"])
+# ==========================================
+# 3. CONTENU DU SITE
+# ==========================================
+tab1, tab2, tab3, tab4 = st.tabs(["📸 Diagnostic IA", "📚 Encyclopédie", "📄 Documents", "ℹ️ À propos"])
 
 # --- ONGLET 1 : DIAGNOSTIC ---
 with tab1:
@@ -83,15 +121,13 @@ with tab1:
                         
                         st.write("---")
                         
-                        # Simulation d'une prédiction de maladie spécifique
                         if prediction > 0.5:
-                            # Pour l'exemple, on simule la détection du Bayoud
                             maladie_detectee = "Le Bayoud"
                             st.error(f"⚠️ **MALADIE DÉTECTÉE : {maladie_detectee}** (Confiance : {prediction*100:.2f}%)")
                             st.write("👉 Cliquez ci-dessous pour accéder directement à la fiche de traitement.")
                             
                             if st.button(f"Consulter la fiche : {maladie_detectee}"):
-                                st.session_state['onglet_actif'] = 1 # Dirige vers l'onglet Encyclopédie
+                                st.session_state['onglet_actif'] = 1
                                 st.session_state['categorie'] = "🦠 Les Maladies"
                                 st.rerun()
                                 
@@ -104,7 +140,6 @@ with tab1:
 with tab2:
     st.markdown("<h3>Guide des Menaces</h3>", unsafe_allow_html=True)
     
-    # Gestion de la redirection depuis l'onglet 1
     default_index = 0
     if 'categorie' in st.session_state and st.session_state['categorie'] == "🦠 Les Maladies":
         default_index = 0
@@ -162,8 +197,6 @@ with tab3:
         </div>
         """, unsafe_allow_html=True)
         
-        # Pour ajouter des documents : tu dois les uploader sur GitHub (dans le même dossier que app.py)
-        # et mettre leur nom exact dans les liens ci-dessous.
         st.markdown("### 📄 Fiches Techniques")
         st.markdown("[📥 Télécharger la fiche technique sur le Bayoud](https://raw.githubusercontent.com/cheikhweidad/palmia-project/main/fiche_bayoud.pdf)")
         st.markdown("[📥 Télécharger le guide de traitement des ravageurs](https://raw.githubusercontent.com/cheikhweidad/palmia-project/main/guide_ravageurs.pdf)")
