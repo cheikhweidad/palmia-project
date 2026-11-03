@@ -3,100 +3,160 @@ import tensorflow as tf
 from PIL import Image
 import numpy as np
 
+# ==========================================
+# 1. CONFIGURATION ET DESIGN (Thème Clair)
+# ==========================================
 st.set_page_config(page_title="PalmIA", page_icon="🌴", layout="wide")
 
-# --- DESIGN (Sans image de fond pour éviter les bugs) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-
-    /* Fond vert sombre uni */
-    .stApp {
-        background-color: #0B1A10;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    h1 { color: #F5F5DC !important; font-family: 'Playfair Display', serif; font-size: 3.5rem !important; text-align: center; }
-    h2, h3, h4 { color: #D4AF37 !important; font-family: 'Playfair Display', serif; text-align: center; }
-    p, label { color: #E0E0E0 !important; font-size: 1.1rem; text-align: center; }
-
-    /* Boutons Dorés */
+    /* Fond blanc cassé / beige clair */
+    .stApp { background-color: #F9F9F6; font-family: 'Poppins', sans-serif; }
+    
+    /* Titres en vert palmier foncé */
+    h1, h2, h3 { color: #1B4332 !important; text-align: center; }
+    
+    /* Boutons verts */
     .stButton>button {
-        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-        color: #0B1A10 !important;
-        border-radius: 50px; border: none; padding: 12px 30px; font-weight: 600; width: 100%;
+        background-color: #2D6A4F;
+        color: white !important;
+        border-radius: 30px;
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        width: 100%;
+    }
+    .stButton>button:hover { background-color: #1B4332; }
+    
+    /* Onglets verts et modernes */
+    .stTabs [data-baseweb="tab"] {
+        background-color: #E9ECEF;
+        border-radius: 10px;
+        color: #1B4332 !important;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #2D6A4F !important;
+        color: white !important;
     }
     
-    /* Onglets */
-    .stTabs [data-baseweb="tab-list"] { gap: 15px; justify-content: center; }
-    .stTabs [data-baseweb="tab"] {
-        height: 55px; background-color: rgba(255, 255, 255, 0.05); border-radius: 30px;
-        padding: 0 30px; color: #D4AF37 !important; border: 1px solid rgba(212, 175, 55, 0.3); font-weight: 600;
-    }
-    .stTabs [aria-selected="true"] { background-color: #2E7D32 !important; color: white !important; border: 1px solid #4CAF50; }
-
-    /* Cartes */
+    /* Cartes blanches élégantes pour l'encyclopédie */
     .luxury-card {
-        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 15px; padding: 25px; margin-bottom: 20px;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
+        border-top: 5px solid #2D6A4F;
+        margin-bottom: 20px;
     }
-    .luxury-card h4 { text-align: right; }
-    .luxury-card p { text-align: right; }
+    
+    .luxury-card h4 { color: #1B4332 !important; text-align: right; margin-bottom: 15px;}
+    .luxury-card p { color: #333 !important; text-align: right; line-height: 1.8; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- CONTENU ---
+# ==========================================
+# 2. CONTENU DU SITE
+# ==========================================
 st.markdown("<h1>🌴 PalmIA</h1>", unsafe_allow_html=True)
-st.markdown("<h3>L'Intelligence Artificielle au Service de la Palmeraie Mauritanienne</h3>", unsafe_allow_html=True)
+st.markdown("<h3>Diagnostic Intelligent du Palmier Dattier</h3>", unsafe_allow_html=True)
 st.write("<br>", unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["📸 Diagnostic Intelligent", "📚 Encyclopédie", "ℹ️ À Propos"])
+tab1, tab2, tab3 = st.tabs(["📸 Diagnostic IA", "📚 Encyclopédie (Maladies & Ravageurs)", "ℹ️ À propos"])
 
+# --- ONGLET 1 : DIAGNOSTIC ---
 with tab1:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        st.markdown("<h3>Analysez votre palmier</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Glissez-déposez une image (JPG, PNG)", type=["jpg", "jpeg", "png"])
+        
         if uploaded_file is not None:
             image = Image.open(uploaded_file)
             st.image(image, caption="Image analysée", use_column_width=True)
-            if st.button("Lancer l'analyse"):
-                with st.spinner("Analyse en cours..."):
+            
+            if st.button("Lancer l'analyse de pointe"):
+                with st.spinner("L'Intelligence Artificielle analyse l'image..."):
+                    # Préparation de l'image pour le modèle
                     img = image.resize((224, 224))
                     img_array = np.array(img) / 255.0
                     img_array = np.expand_dims(img_array, axis=0)
+                    
                     try:
                         @st.cache_resource
                         def load_model():
                             return tf.keras.models.load_model("modele_palmier_v1.h5")
+                        
                         model = load_model()
                         prediction = model.predict(img_array)[0][0]
+                        
+                        st.write("---")
                         if prediction > 0.5:
-                            st.error(f"⚠️ **MALADE** (Confiance : {prediction*100:.2f}%)")
+                            st.error(f"⚠️ **RÉSULTAT : MALADE** (Confiance : {prediction*100:.2f}%)")
+                            st.write("👉 Consultez l'onglet Encyclopédie pour identifier la maladie et le traitement.")
                         else:
-                            st.success(f"✅ **SAIN** (Confiance : {(1-prediction)*100:.2f}%)")
+                            st.success(f"✅ **RÉSULTAT : SAIN** (Confiance : {(1-prediction)*100:.2f}%)")
                     except Exception as e:
-                        st.error(f"Erreur : {e}")
+                        st.error(f"Erreur de chargement du modèle : {e}")
 
+# --- ONGLET 2 : ENCYCLOPÉDIE ---
 with tab2:
-    categorie = st.radio("Sélectionnez une catégorie :", ["🦠 Maladies", "🐛 Ravageurs"], horizontal=True)
+    st.markdown("<h3>Guide des Menaces</h3>", unsafe_allow_html=True)
+    categorie = st.radio("Sélectionnez une catégorie :", ["🦠 Les Maladies", "🐛 Les Ravageurs"], horizontal=True)
+    
+    st.write("<br>", unsafe_allow_html=True)
+    
     if "Maladies" in categorie:
         col_a, col_b = st.columns(2)
         with col_a:
-            st.markdown("""<div class="luxury-card"><h4>Le Bayoud</h4><p>Symptômes : Décoloration des feuilles.<br>Traitement : Arrachage.</p></div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div class="luxury-card">
+                <h4>Le Bayoud (Fusarium oxysporum)</h4>
+                <p><b>Symptômes :</b> Décoloration des feuilles, dessèchement brutal d'un côté du palmier. Le tronc devient fragile.</p>
+                <p><b>Traitement :</b> Arrachage et brûlage immédiat du palmier infecté pour éviter la propagation.</p>
+            </div>
+            """, unsafe_allow_html=True)
         with col_b:
-            st.markdown("""<div class="luxury-card"><h4>L'Acariose</h4><p>Symptômes : Taches blanches.<br>Traitement : Acaricides.</p></div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div class="luxury-card">
+                <h4>L'Acariose</h4>
+                <p><b>Symptômes :</b> Apparition de taches blanches sur les jeunes palmes, entraînant un dépérissement progressif.</p>
+                <p><b>Traitement :</b> Utilisation d'acaricides spécifiques et taille des palmes atteintes.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
     else:
         col_a, col_b = st.columns(2)
         with col_a:
-            st.markdown("""<div class="luxury-card"><h4>La Cochenille</h4><p>Symptômes : Amas blancs.<br>Traitement : Insecticides.</p></div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div class="luxury-card">
+                <h4>La Cochenille Blanche</h4>
+                <p><b>Symptômes :</b> Amas blancs cotonneux sur les palmes et les fruits, affaiblissant l'arbre.</p>
+                <p><b>Traitement :</b> Taille sévère, traitements insecticides et lutte biologique.</p>
+            </div>
+            """, unsafe_allow_html=True)
         with col_b:
-            st.markdown("""<div class="luxury-card"><h4>Le Charançon</h4><p>Symptômes : Trous dans le tronc.<br>Traitement : Pièges.</p></div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div class="luxury-card">
+                <h4>Le Charançon Rouge</h4>
+                <p><b>Symptômes :</b> Trous dans le tronc, présence de sciure de bois, effondrement du palmier.</p>
+                <p><b>Traitement :</b> Injection de produits dans le tronc, pièges à phéromones.</p>
+            </div>
+            """, unsafe_allow_html=True)
 
+# --- ONGLET 3 : À PROPOS ---
 with tab3:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown("""<div class="luxury-card"><h4>À Propos</h4><p>Master Phœniciculture & IA.<br>Université de Nouakchott.</p></div>""", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="luxury-card">
+            <h4>PalmIA - Projet d'Excellence</h4>
+            <p>Cette plateforme a été développée dans le cadre du Master Phœniciculture & Intelligence Artificielle.</p>
+            <p>Elle vise à aider les agriculteurs mauritaniens à protéger leurs oasis grâce aux nouvelles technologies.</p>
+            <p><b>Partenaires :</b> Université de Nouakchott, USTHB, Laboratoire d'Atar.</p>
+            <p>© 2027 - Tous droits réservés.</p>
+        </div>
+        """, unsafe_allow_html=True)
